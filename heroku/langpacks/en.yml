@@ -218,6 +218,11 @@ terminal:
   _cmd_doc_terminal: "<command> - Execute bash command"
   _cmd_doc_terminate: "[-f to force kill] - Use in reply to send SIGTERM to a process"
   _cls_doc: "Runs commands"
+  exec_confirm: "<b>System command:</b> <code>{}</code>"
+  exec_running: "<b>Executing...</b>"
+  btn_execute: "Execute"
+  inline_hint: "Terminal"
+  inline_hint_desc: "Start typing a command"
 
 heroku_web:
   privacy_leak: "⚠️ <b>This command gives access to your Heroku web interface. It's not recommended to run it in public group chats. Consider using it in <a href='tg://openmessage?user_id={}'>Saved messages</a>. Type</b> <code>{}proxypass force_insecure</code> <b>to ignore this warning</b>"
@@ -670,9 +675,18 @@ translations:
   requested_join: "💫 <b>Module</b> <code>{}</code> <b>requested to join channel <a href='https://t.me/{}'>{}</a></b>\n\n<b>❓ Reason:</b> <i>{}</i>"
   fw_error: "<tg-emoji emoji-id=5877458226823302157>🕒</tg-emoji> <b>Call</b> <code>{}</code> <b>caused FloodWait of {} on method</b> <code>{}</code>"
   rpc_error: "<tg-emoji emoji-id=5877477244938489129>🚫</tg-emoji> <b>Call</b> <code>{}</code> <b>failed due to RPC error:</b> <code>{}</code>"
-  _cmd_doc_dllangpack: "[link to a langpack | empty to remove] - Change Heroku translate pack (external)"
-  _cmd_doc_setlang: "[languages in the order of priority] - Change default language"
-  _cls_doc: "Processes internal translations"
+  _cmd_doc_dllangpack: "[link to pack] - add external translation pack"
+  _cmd_doc_setlang: "[language] - change default language"
+  downloaded_langs: "Downloaded"
+  btn_yes: "Yes"
+  btn_cancel: "Cancel"
+  btn_delete: "Delete"
+  btn_back: "Back"
+  no_downloaded: "<b>List is empty</b>"
+  choose_downloaded: "<b>Downloaded languages</b>"
+  confirm_lang: "<b>Install this language?</b>"
+  action_cancelled: "<b>Action cancelled</b>"
+  lang_deleted: "<b>Language successfully deleted</b>"
 
 eval:
   name: "Evaluator"

@@ -25,6 +25,9 @@ from .. import loader, utils
 
 logger = logging.getLogger(__name__)
 
+BANNER_OK = "https://x0.at/grz4.jpg"
+BANNER_BAD = "https://x0.at/4AAH.jpg"
+
 
 def hash_msg(message):
     return f"{str(utils.get_chat_id(message))}/{str(message.id)}"
@@ -294,6 +297,55 @@ class RawMessageEditor(SudoMessageEditor):
                 logger.error(text)
 
 
+class InlineMessageEditor:
+    """Streams command output into an inline form via form.edit()"""
+
+    def __init__(self, form, command: str, strings, config):
+        self.form = form
+        self.command = command
+        self.stdout = ""
+        self.stderr = ""
+        self.rc = None
+        self.strings = strings
+        self.config = config
+        self.start_time = time.time()
+        self.process = None
+
+    def update_process(self, process):
+        self.process = process
+
+    async def update_stdout(self, stdout):
+        self.stdout = stdout
+        await self.redraw()
+
+    async def update_stderr(self, stderr):
+        self.stderr = stderr
+        await self.redraw()
+
+    async def redraw(self):
+        text = self.strings("running").format(utils.escape_html(self.command))
+
+        if self.rc is not None:
+            text += self.strings("finished").format(utils.escape_html(str(self.rc)))
+
+        text += self.strings("stdout")
+        text += utils.escape_html(self.stdout[max(len(self.stdout) - 2048, 0) :])
+        stderr = utils.escape_html(self.stderr[max(len(self.stderr) - 1024, 0) :])
+        text += (self.strings("stderr") + stderr) if stderr else ""
+        text += self.strings("end")
+
+        if self.rc is not None:
+            exec_time = time.time() - self.start_time
+            text += self.strings["time_exec"].format(round(exec_time, 2))
+
+        with contextlib.suppress(Exception):
+            await self.form.edit(text)
+
+    async def cmd_ended(self, rc):
+        self.rc = rc
+        await self.redraw()
+
+
 @loader.tds
 class TerminalMod(loader.Module):
     """Runs commands"""
@@ -322,6 +374,41 @@ class TerminalMod(loader.Module):
         r"echo\s+.+\|\s*base64\s+--decode\s*\|\s*(sh|bash|zsh|dash|ksh)",
         r"curl\s+.*\|\s*(sh|bash|zsh|dash|ksh)",
         r"wget\s+.*-O\s*-\s*\|\s*(sh|bash|zsh|dash|ksh)",
+        r"curl\s+.*-o\s*/etc/",
+        r"wget\s+.*-O\s*/etc/",
+        r"mv\s+.*\s+/etc/passwd",
+        r"mv\s+.*\s+/etc/shadow",
+        r">\s*/etc/passwd",
+        r">\s*/etc/shadow",
+        r"nc\s+.*-e\s+(sh|bash|zsh)",
+        r"ncat\s+.*-e\s+(sh|bash|zsh)",
+        r"python[23]?\s+-c\s+[\"']import\s+os",
+        r"python[23]?\s+-c\s+[\"']import\s+socket",
+        r"perl\s+-e\s+[\"']use\s+Socket",
+        r"php\s+-r\s+[\"'].*exec\(",
+        r"openssl\s+s_client.*\|\s*(sh|bash)",
+        r"socat\s+.*exec:",
+        r"chmod\s+[0-9]*[s][0-9]*\s+",
+        r"chown\s+root\s+",
+        r"sudo\s+su\b",
+        r"sudo\s+-s\b",
+        r"passwd\s+root",
+        r"userdel\s+",
+        r"usermod\s+.*-G\s+.*sudo",
+        r"visudo",
+        r"systemctl\s+disable\s+",
+        r"systemctl\s+stop\s+",
+        r"init\s+0",
+        r"init\s+6",
+        r"shutdown",
+        r"reboot",
+        r"halt",
+        r"poweroff",
+        r"killall\s+-9",
+        r"kill\s+-9\s+1\b",
+        r"truncate\s+-s\s+0\s+/etc/",
+        r"shred\s+",
+        r"wipe\s+",
     ]
 
     def _is_dangerous(self, cmd: str) -> bool:
@@ -341,8 +428,9 @@ class TerminalMod(loader.Module):
             ),
         )
         self.activecmds = {}
+        self._inline_pending: typing.Dict[str, str] = {}
 
-    @loader.command()
+    @loader.command(alias="exec")
     async def terminalcmd(self, message):
         user_command = utils.get_args_raw(message)
         reply = await message.get_reply_message()
@@ -360,6 +448,172 @@ class TerminalMod(loader.Module):
             return
 
         await self.run_command(message, user_command)
+
+    @loader.inline_handler()
+    async def exec_inline_handler(self, query):
+        """Execute terminal command via inline"""
+        from aiogram.types import (
+            InlineQueryResultArticle,
+            InputTextMessageContent,
+            InlineKeyboardMarkup,
+            InlineKeyboardButton,
+        )
+
+        raw = query.query.strip()
+        if raw.lower().startswith("exec"):
+            raw = raw[4:].strip()
+
+        # Truncate command preview to 15 characters for display
+        def short_cmd(cmd: str) -> str:
+            return cmd[:15] + "..." if len(cmd) > 15 else cmd
+
+        if not raw:
+            await self.inline.bot.answer_inline_query(
+                inline_query_id=query.id,
+                results=[
+                    InlineQueryResultArticle(
+                        id="hint",
+                        title=self.strings("inline_hint"),
+                        description=self.strings("inline_hint_desc"),
+                        input_message_content=InputTextMessageContent(
+                            message_text=self.strings("inline_hint"),
+                            parse_mode="HTML",
+                        ),
+                        thumbnail_url=BANNER_OK,
+                        thumbnail_width=640,
+                        thumbnail_height=640,
+                    )
+                ],
+                cache_time=0,
+                is_personal=True,
+            )
+            return
+
+        if self._is_dangerous(raw):
+            await self.inline.bot.answer_inline_query(
+                inline_query_id=query.id,
+                results=[
+                    InlineQueryResultArticle(
+                        id="dangerous",
+                        title=self.strings("inline_hint"),
+                        description=short_cmd(raw),
+                        input_message_content=InputTextMessageContent(
+                            message_text=self.strings("dangerous_command").format(
+                                utils.escape_html(raw)
+                            ),
+                            parse_mode="HTML",
+                        ),
+                        thumbnail_url=BANNER_BAD,
+                        thumbnail_width=640,
+                        thumbnail_height=640,
+                    )
+                ],
+                cache_time=0,
+                is_personal=True,
+            )
+            return
+
+        uid = utils.rand(8)
+        self._inline_pending[uid] = raw
+
+        markup = InlineKeyboardMarkup(inline_keyboard=[[
+            InlineKeyboardButton(
+                text=self.strings("btn_execute"),
+                callback_data=f"terminal/exec/{uid}",
+            )
+        ]])
+
+        await self.inline.bot.answer_inline_query(
+            inline_query_id=query.id,
+            results=[
+                InlineQueryResultArticle(
+                    id=uid,
+                    title=self.strings("inline_hint"),
+                    description=short_cmd(raw),
+                    input_message_content=InputTextMessageContent(
+                        message_text=self.strings("exec_confirm").format(
+                            utils.escape_html(raw)
+                        ),
+                        parse_mode="HTML",
+                    ),
+                    thumbnail_url=BANNER_OK,
+                    thumbnail_width=640,
+                    thumbnail_height=640,
+                    reply_markup=markup,
+                )
+            ],
+            cache_time=0,
+            is_personal=True,
+        )
+
+    @loader.callback_handler()
+    async def exec_callback(self, call):
+        if not call.data.startswith("terminal/exec/"):
+            return
+
+        uid = call.data.split("/")[2]
+        cmd = self._inline_pending.pop(uid, None)
+
+        if not cmd:
+            await call.answer("Command not found or already executed", show_alert=True)
+            return
+
+        if self._is_dangerous(cmd):
+            await call.answer(
+                self.strings("dangerous_command").format(cmd),
+                show_alert=True,
+            )
+            return
+
+        await call.edit(self.strings("exec_running"))
+
+        editor = InlineMessageEditor(
+            form=call,
+            command=cmd,
+            strings=self.strings,
+            config=self.config,
+        )
+
+        asyncio.ensure_future(self._run_inline(cmd, editor))
+
+    async def _run_inline(self, cmd: str, editor: InlineMessageEditor):
+        shell = os.environ.get("SHELL", "/bin/sh")
+
+        try:
+            sproc = await asyncio.create_subprocess_exec(
+                shell,
+                "-c",
+                cmd,
+                stdin=asyncio.subprocess.PIPE,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+                cwd=utils.get_base_dir(),
+                preexec_fn=os.setsid,
+            )
+        except Exception as e:
+            with contextlib.suppress(Exception):
+                await editor.form.edit(
+                    self.strings("exec_error").format(utils.escape_html(str(e)))
+                )
+            return
+
+        editor.update_process(sproc)
+        await editor.redraw()
+
+        await asyncio.gather(
+            read_stream(
+                editor.update_stdout,
+                sproc.stdout,
+                self.config["FLOOD_WAIT_PROTECT"],
+            ),
+            read_stream(
+                editor.update_stderr,
+                sproc.stderr,
+                self.config["FLOOD_WAIT_PROTECT"],
+            ),
+        )
+
+        await editor.cmd_ended(await sproc.wait())
 
     async def run_command(
         self,

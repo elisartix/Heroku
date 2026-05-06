@@ -173,6 +173,12 @@ terminal:
   _cmd_doc_apt: "Сокращение для '.terminal apt'"
   _cmd_doc_terminal: "<команда> - Запустить команду в системе"
   _cmd_doc_terminate: "[-f to force kill] - Ответьте на сообщение, чтобы убить процесс"
+  exec_confirm: "<b>Системная команда:</b> <code>{}</code>"
+  exec_running: "<b>Выполняю...</b>"
+  btn_execute: "Выполнить"
+  inline_hint: "Terminal"
+  inline_hint_desc: "Начните вводить команду"
+
 
 heroku_web:
   privacy_leak: "⚠️ <b>Эта команда дает доступ к веб-интерфейсу Heroku. Ее выполнение в публичных чатах является угрозой безопасности. Предпочтительно выполнять ее в <a href='tg://openmessage?user_id={}'>Избранных сообщениях</a>. Выполни</b> <code>{}proxypass force_insecure</code> <b>чтобы отключить это предупреждение</b>"
@@ -624,8 +630,18 @@ translations:
   requested_join: "<tg-emoji emoji-id=5469741319330996757>💫</tg-emoji> <b>Модуль</b> <code>{}</code> <b>запросил присоединение к каналу <a href='https://t.me/{}'>{}</a></b>\n\n<b>❓ Причина:</b> <i>{}</i>"
   fw_error: "<tg-emoji emoji-id=5877458226823302157>🕒</tg-emoji> <b>Команда</b> <code>{}</code> <b>вызвал FloodWait {} в методе</b> <code> {}</code>"
   rpc_error: "<tg-emoji emoji-id=5877477244938489129>🚫</tg-emoji> <b>Команда</b> <code>{}</code> <b>не удалась из-за ошибки RPC:</b> <code>{}</code>"
-  _cmd_doc_dllangpack: "[ссылка на пак | пустое чтобы удалить] - Изменить внешний пак перевода"
-  _cmd_doc_setlang: "[языки] - Изменить стандартный язык"
+  _cmd_doc_dllangpack: "[ссылка на пак] - добавить внешний пак перевода"
+  _cmd_doc_setlang: "[язык] - изменить стандартный язык"
+  downloaded_langs: "Скачанные"
+  btn_yes: "Да"
+  btn_cancel: "Отмена"
+  btn_delete: "Удалить"
+  btn_back: "Назад"
+  no_downloaded: "<b>Список пуст<\b>"
+  choose_downloaded: "<b>Скачанные языки<\b>"
+  confirm_lang: "<b>Установить этот язык?<\b>"
+  action_cancelled: "<b>Действие отменено<\b>"
+  lang_deleted: "<b>Язык успешно удалён<\b>"
 
 eval:
   eval: "<tg-emoji emoji-id={}>💻</tg-emoji><b> Код:</b>\n<pre><code class=\"language-{}\">{}</code></pre>\n\n<tg-emoji emoji-id=5197688912457245639>✅</tg-emoji><b> Результат:</b>\n<pre><code class=\"language-{}\">{}</code></pre>"

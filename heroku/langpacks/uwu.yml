@@ -187,6 +187,11 @@ terminal:
   _cmd_doc_terminal: "<command> - Execute bash command"
   _cmd_doc_terminate: "[-f to fowce kiww] - Use in wepwy to send SIGTEWM to a pwocess"
   _cls_doc: "Wuns commands"
+  exec_confirm: "<b>System command >w<</b> <code>{}</code>"
+  exec_running: "<b>Exekyuting... nyaa~ >w<</b>"
+  btn_execute: "Exekyute pwease~ :3"
+  inline_hint: "Tewminaw"
+  inline_hint_desc: "Stawt typing a command, senpai OwO"
 
 heroku_web:
   privacy_leak: "⚠️ <b>Dis command gives access to youw Hewoku web intewface. It's nyot wecommended to wun it in pubwic gwoup chats. Considew using it in <a href='tg://openmessage?user_id={}'>Saved messages</a>. Type</b> <code>{}proxypass force_insecure</code> <b>to ignyowe dis wawning >.<</b>"
@@ -639,9 +644,20 @@ translations:
   requested_join: "💫 <b>Moduwe</b> <code>{}</code> <b>wequested to join channyew <a href='https://t.me/{}'>{}</a></b>\n\n<b>❓ Weason:</b> <i>{}</i>"
   fw_error: "<tg-emoji emoji-id=5877458226823302157>🕒</tg-emoji> <b>Caww</b> <code>{}</code> <b>caused FwoodWait of {} on medod</b> <code>{}</code>"
   rpc_error: "<tg-emoji emoji-id=5877477244938489129>🚫</tg-emoji> <b>Caww</b> <code>{}</code> <b>faiwed due to WPC ewwow:</b> <code>{}</code>"
-  _cmd_doc_dllangpack: "[wink to a wangpack | empty to wemove] - Change Hewoku twanswate pack (extewnaw)"
-  _cmd_doc_setlang: "[wangwuages in da owdew of pwiowity] - Change defauwt wangwuage"
+  _cmd_doc_dllangpack: "[wink to pack] - add extewnal twanswation pack, pwease~ :3"
+  _cmd_doc_setlang: "[wanguage] - change defauwt wanguage OwO"
+  downloaded_langs: "Downwoaded"
+  btn_yes: "Yesh~"
+  btn_cancel: "Cancew :c"
+  btn_delete: "Dewete"
+  btn_back: "Baaack"
+  no_downloaded: "<b>Wist is empty... >///<</b>"
+  choose_downloaded: "<b>Downwoaded wanguages~</b>"
+  confirm_lang: "<b>Instaww dis wanguage, senpai? :3</b>"
+  action_cancelled: "<b>Action cancewwed... uwu</b>"
+  lang_deleted: "<b>Wanguage successfuwwy deweted~ yippee</b>"
   _cls_doc: "Pwocesses intewnaw twanswations"
+  
 
 eval:
   name: "Evawuwatow"

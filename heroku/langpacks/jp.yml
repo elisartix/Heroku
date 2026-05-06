@@ -187,6 +187,11 @@ terminal:
   _cmd_doc_terminal: "<command> - bashコマンドを実行します"
   _cmd_doc_terminate: "[-f 強制終了] - 返信で使用し、プロセスにSIGTERMを送信します"
   _cls_doc: "コマンドを実行します"
+  exec_confirm: "<b>システムコマンド:</b> <code>{}</code>"
+  exec_running: "<b>実行しています...</b>"
+  btn_execute: "実行する"
+  inline_hint: "ターミナル"
+  inline_hint_desc: "コマンドを入力し始めてください"
 
 heroku_web:
   privacy_leak: "⚠️ <b>このコマンドは Heroku Web インターフェースへのアクセスを提供します。公開グループチャットでの実行はお勧めしません。<a href='tg://openmessage?user_id={}'>保存用メッセージ</a>で使用することを検討してください。警告を無視するには</b> <code>{}proxypass force_insecure</code> <b>と入力してください</b>"
@@ -639,8 +644,18 @@ translations:
   requested_join: "💫 <b>モジュール</b> <code>{}</code> <b>がチャンネル <a href='https://t.me/{}'>{}</a> への参加をリクエストしました</b>\n\n<b>❓ 理由:</b> <i>{}</i>"
   fw_error: "<tg-emoji emoji-id=5877458226823302157>🕒</tg-emoji> <b>呼び出し</b> <code>{}</code> <b>により、メソッド</b> <code>{}</code> <b>で {} の FloodWait が発生しました</b>"
   rpc_error: "<tg-emoji emoji-id=5877477244938489129>🚫</tg-emoji> <b>呼び出し</b> <code>{}</code> <b>はRPCエラーにより失敗しました:</b> <code>{}</code>"
-  _cmd_doc_dllangpack: "[link to a langpack | empty to remove] - Heroku 翻訳パック（外部）を変更します"
-  _cmd_doc_setlang: "[languages in the order of priority] - デフォルト言語を変更します"
+  _cmd_doc_dllangpack: "[リンク] - 外部の翻訳パックを追加"
+  _cmd_doc_setlang: "[言語] - デフォルトの言語を変更する"
+  downloaded_langs: "ダウンロード済み"
+  btn_yes: "はい"
+  btn_cancel: "キャンセル"
+  btn_delete: "削除"
+  btn_back: "戻る"
+  no_downloaded: "<b>リストは空です</b>"
+  choose_downloaded: "<b>ダウンロード済みの言語</b>"
+  confirm_lang: "<b>この言語をインストールしますか？</b>"
+  action_cancelled: "<b>操作をキャンセルしました</b>"
+  lang_deleted: "<b>言語を削除しました</b>"
   _cls_doc: "内部翻訳を処理します"
 
 eval:

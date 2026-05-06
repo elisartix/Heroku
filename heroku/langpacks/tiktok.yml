@@ -173,6 +173,11 @@ terminal:
   _cmd_doc_apt: "Типа '.terminal apt' но короче"
   _cmd_doc_terminal: "<команда> - Бахнуть баш команду"
   _cmd_doc_terminate: "[-f для форса] - Реплайни, чтоб убить процесс"
+  exec_confirm: "<b>Системная команда, бро:</b> <code>{}</code>"
+  exec_running: "<b>Выполняю... щавель в деле</b>"
+  btn_execute: "Выполнить 67"
+  inline_hint: "Хакер тул"
+  inline_hint_desc: "Начинай вводить, сигма-бой"
 
 heroku_web:
   privacy_leak: "⚠️ <b>Эй, это доступ к вебу Heroku. Не пали это в чатах, а то взломают как лоха. Юзай в <a href='tg://openmessage?user_id={}'>Избранном</a>. Пиши</b> <code>{}proxypass force_insecure</code> <b>если пофиг и хочешь рискнуть</b>"
@@ -608,8 +613,18 @@ translations:
   requested_join: "💫 <b>Модуль</b> <code>{}</code> <b>хочет в канал <a href='https://t.me/{}'>{}</a></b>\n\n<b>❓ Зачем:</b> <i>{}</i>"
   fw_error: "<tg-emoji emoji-id=5877458226823302157>🕒</tg-emoji> <b>Команда</b> <code>{}</code> <b>слолвила ФлудВейт {} в</b> <code> {}</code>"
   rpc_error: "<tg-emoji emoji-id=5877477244938489129>🚫</tg-emoji> <b>Команда</b> <code>{}</code> <b>рипнулась (RPC Error):</b> <code>{}</code>"
-  _cmd_doc_dllangpack: "[ссылка | пусто = удалить] - Внешний пак перевода"
-  _cmd_doc_setlang: "[языки] - Сменить язык"
+  _cmd_doc_dllangpack: "[ссылка на пак] - добавить внешний пак перевода (не для нормисов)"
+  _cmd_doc_setlang: "[язык] - сменить стандартный язык"
+  downloaded_langs: "Скачанные"
+  btn_yes: "Да"
+  btn_cancel: "Отмена"
+  btn_delete: "Удалить"
+  btn_back: "Назад"
+  no_downloaded: "<b>Список пуст, нормис</b>"
+  choose_downloaded: "<b>Скачанные языки</b>"
+  confirm_lang: "<b>Установить этот язык, бро?</b>"
+  action_cancelled: "<b>Действие отменено, плэки-плэки</b>"
+  lang_deleted: "<b>Язык успешно удалён, сигма момент</b>"
 
 eval:
   eval: "<tg-emoji emoji-id={}>💻</tg-emoji><b> Говнокод:</b>\n<pre><code class=\"language-{}\">{}</code></pre>\n\n<tg-emoji emoji-id=5197688912457245639>✅</tg-emoji><b> Выхлоп:</b>\n<pre><code class=\"language-{}\">{}</code></pre>"
