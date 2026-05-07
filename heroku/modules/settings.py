@@ -52,7 +52,6 @@ class CoreMod(loader.Module):
                     "vds",
                     "wsl",
                     "userland",
-                    "jamhost",
                     "hikkahost",
                     "lavhost",
                 ]
@@ -522,8 +521,6 @@ class CoreMod(loader.Module):
                 await utils.answer(message, self.strings("wsl_install"))
             case _ if "-ul" in args:
                 await utils.answer(message, self.strings("userland_install"))
-            case _ if "-jh" in args:
-                await utils.answer(message, self.strings("jamhost_install"))
             case _ if "-hh" in args:
                 await utils.answer(message, self.strings("hikkahost_install"))
             case _ if "-lh" in args:
