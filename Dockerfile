@@ -7,7 +7,6 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=off \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     PIP_DEFAULT_TIMEOUT=100 \
-    AIOHTTP_NO_EXTENSIONS=1 \
     \
     PYSETUP_PATH="/opt/pysetup" \
     VENV_PATH="/opt/pysetup/.venv" \
@@ -50,7 +49,8 @@ RUN mkdir /data/private
 
 RUN git clone https://github.com/coddrago/Heroku /data/Heroku
 WORKDIR /data/Heroku
-RUN git fetch && git checkout master && git pull
+ARG HEROKU_REF=beta
+RUN git fetch origin "${HEROKU_REF}" && git checkout "${HEROKU_REF}" && git pull origin "${HEROKU_REF}"
 
 RUN pip install --no-warn-script-location --no-cache-dir -U -r requirements.txt
 
