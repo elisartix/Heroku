@@ -93,7 +93,6 @@ __all__ = [
     "Strings",
     "Translator",
     "ConfigValue",
-    "ConfigCategory",
     "ModuleConfig",
     "owner",
     "group_owner",
@@ -110,6 +109,7 @@ __all__ = [
     "inline_everyone",
     "loop",
     "set_session_access_hashes",
+    "need_update",
 ]
 
 logger = logging.getLogger(__name__)
@@ -892,6 +892,21 @@ def raw_handler(*updates: TLObject):
     return inner
 
 
+def need_update(*update_types: str):
+    """
+    Decorator that marks a method as a handler for Telegram Bot API update types
+    The method will be registered in the inline bot's dispatcher when the module loads, and unregistered when the module unloads.
+    """
+
+    def inner(func: Command) -> Command:
+        func.is_bot_update_handler = True
+        func.bot_update_types = list(update_types)
+        func.id = uuid4().hex
+        return func
+
+    return inner
+
+
 class Modules:
     """Stores all registered modules"""
 
@@ -1186,6 +1201,41 @@ class Modules:
                     name,
                     instance.__class__.__name__,
                     handler.id,
+                )
+
+    def register_bot_update_handlers(self, instance: Module):
+        """Register bot update handlers for a module"""
+        for name, handler in utils.iter_attrs(instance):
+            if not getattr(handler, "is_bot_update_handler", False):
+                continue
+
+            for update_type in getattr(handler, "bot_update_types", []):
+                self.inline.register_bot_update_handler(
+                    f"{handler.id}_{update_type}",
+                    update_type,
+                    handler,
+                )
+                logger.debug(
+                    "Registered bot update handler %s (%s) for module %s, update type %s",
+                    name,
+                    handler.id,
+                    instance.__class__.__name__,
+                    update_type,
+                )
+
+    def unregister_bot_update_handlers(self, instance: Module, purpose: str):
+        """Unregister bot update handlers for a module"""
+        for name, handler in utils.iter_attrs(instance):
+            if not getattr(handler, "is_bot_update_handler", False):
+                continue
+
+            for update_type in getattr(handler, "bot_update_types", []):
+                self.inline.unregister_bot_update_handler(f"{handler.id}_{update_type}")
+                logger.debug(
+                    "Unregistered bot update handler %s of module %s for %s",
+                    name,
+                    instance.__class__.__name__,
+                    purpose,
                 )
 
     @property
@@ -1700,10 +1750,12 @@ class Modules:
 
         self.unregister_commands(mod, "update")
         self.unregister_raw_handlers(mod, "update")
+        self.unregister_bot_update_handlers(mod, "update")
 
         self.register_commands(mod)
         self.register_watchers(mod)
         self.register_raw_handlers(mod)
+        self.register_bot_update_handlers(mod)
 
     def get_classname(self, name: str) -> str:
         return next(
@@ -1750,6 +1802,7 @@ class Modules:
                 await module.on_unload()
 
                 self.unregister_raw_handlers(module, "unload")
+                self.unregister_bot_update_handlers(module, "unload")
                 self.unregister_loops(module, "unload")
                 self.unregister_commands(module, "unload")
                 self.unregister_watchers(module, "unload")

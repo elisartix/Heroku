@@ -18,7 +18,7 @@ import logging
 import time
 import typing
 
-from aiogram import Bot, Dispatcher
+from aiogram import Bot, Dispatcher, Router
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.exceptions import TelegramConflictError, TelegramUnauthorizedError
@@ -48,6 +48,28 @@ logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
     from ..loader import Modules
+
+
+_BOT_UPDATE_TYPE_REGISTERS = {
+    "message": lambda dp, handler: dp.message.register(handler, lambda *_: True),
+    "edited_message": lambda dp, handler: dp.edited_message.register(handler, lambda *_: True),
+    "channel_post": lambda dp, handler: dp.channel_post.register(handler, lambda *_: True),
+    "edited_channel_post": lambda dp, handler: dp.edited_channel_post.register(handler, lambda *_: True),
+    "inline_query": lambda dp, handler: dp.inline_query.register(handler, lambda _: True),
+    "chosen_inline_result": lambda dp, handler: dp.chosen_inline_result.register(handler, lambda _: True),
+    "callback_query": lambda dp, handler: dp.callback_query.register(handler, lambda _: True),
+    "shipping_query": lambda dp, handler: dp.shipping_query.register(handler, lambda _: True),
+    "pre_checkout_query": lambda dp, handler: dp.pre_checkout_query.register(handler, lambda _: True),
+    "poll": lambda dp, handler: dp.poll.register(handler, lambda _: True),
+    "poll_answer": lambda dp, handler: dp.poll_answer.register(handler, lambda _: True),
+    "my_chat_member": lambda dp, handler: dp.my_chat_member.register(handler, lambda _: True),
+    "chat_member": lambda dp, handler: dp.chat_member.register(handler, lambda _: True),
+    "chat_join_request": lambda dp, handler: dp.chat_join_request.register(handler, lambda _: True),
+    "message_reaction": lambda dp, handler: dp.message_reaction.register(handler, lambda _: True),
+    "message_reaction_count": lambda dp, handler: dp.message_reaction_count.register(handler, lambda _: True),
+    "chat_boost": lambda dp, handler: dp.chat_boost.register(handler, lambda _: True),
+    "removed_chat_boost": lambda dp, handler: dp.removed_chat_boost.register(handler, lambda _: True),
+}
 
 
 class InlineManager(
@@ -102,6 +124,10 @@ class InlineManager(
         self.bot_id: int = None
         self.bot_username: str = None
 
+        self._bot_update_handlers: typing.Dict[
+            str, typing.Tuple[str, typing.Callable]
+        ] = {}
+
     async def _cleaner(self):
         """Cleans outdated inline units"""
         while True:
@@ -110,6 +136,43 @@ class InlineManager(
                     del self._units[unit_id]
 
             await asyncio.sleep(5)
+
+    def _build_dp(self) -> Dispatcher:
+        dp = Dispatcher()
+
+        dp.inline_query.register(
+            self._inline_handler,
+            lambda _: True,
+        )
+
+        dp.callback_query.register(
+            self._callback_query_handler,
+            lambda _: True,
+        )
+
+        dp.chosen_inline_result.register(
+            self._chosen_inline_handler,
+            lambda _: True,
+        )
+
+        dp.message.register(
+            self._message_handler,
+            lambda *_: True,
+        )
+
+        for handler_id, (update_type, handler) in self._bot_update_handlers.items():
+            register_fn = _BOT_UPDATE_TYPE_REGISTERS.get(update_type)
+            if register_fn:
+                try:
+                    register_fn(dp, handler)
+                except Exception:
+                    logger.exception(
+                        "Failed to re-register bot update handler %s for update type %s",
+                        handler_id,
+                        update_type,
+                    )
+
+        return dp
 
     async def register_manager(
         self,
@@ -140,7 +203,7 @@ class InlineManager(
             token=self._token, default=DefaultBotProperties(parse_mode=ParseMode.HTML)
         )
         self._bot = self.bot
-        self._dp = Dispatcher()
+        self._dp = self._build_dp()
 
         try:
             bot_me = await self.bot.get_me()
@@ -209,26 +272,6 @@ class InlineManager(
 
         await self._client.delete_messages(self.bot_username, m)
 
-        self._dp.inline_query.register(
-            self._inline_handler,
-            lambda _: True,
-        )
-
-        self._dp.callback_query.register(
-            self._callback_query_handler,
-            lambda _: True,
-        )
-
-        self._dp.chosen_inline_result.register(
-            self._chosen_inline_handler,
-            lambda _: True,
-        )
-
-        self._dp.message.register(
-            self._message_handler,
-            lambda *_: True,
-        )
-
         old = self.bot.get_updates
         revoke = self._dp_revoke_token
 
@@ -254,6 +297,78 @@ class InlineManager(
         self._task.cancel()
         await self._dp.stop_polling()
         self._cleaner_task.cancel()
+
+    async def _restart_polling(self):
+        """Rebuild dispatcher and restart polling with current handler set"""
+        if self._task:
+            self._task.cancel()
+        with contextlib.suppress(Exception):
+            await self._dp.stop_polling()
+
+        self._dp = self._build_dp()
+
+        old = self.bot.get_updates
+        revoke = self._dp_revoke_token
+
+        async def new(*args, **kwargs):
+            nonlocal revoke, old
+            try:
+                return await old(*args, **kwargs)
+            except TelegramConflictError:
+                await revoke()
+            except TelegramUnauthorizedError:
+                logger.critical("Got Unauthorized")
+                await self._stop()
+
+        self.bot.get_updates = new
+
+        self._task = asyncio.ensure_future(
+            self._dp.start_polling(self._bot, handle_signals=False)
+        )
+
+    def register_bot_update_handler(
+        self,
+        handler_id: str,
+        update_type: str,
+        handler: typing.Callable,
+    ):
+        """
+        Register a bot update handler from a module
+        :param handler_id: Unique handler ID (use uuid4)
+        :param update_type: One of the supported Telegram update types
+        :param handler: Async callable to handle the update
+        """
+        if update_type not in _BOT_UPDATE_TYPE_REGISTERS:
+            logger.warning(
+                "Unsupported bot update type: %s (handler_id=%s)",
+                update_type,
+                handler_id,
+            )
+            return
+
+        self._bot_update_handlers[handler_id] = (update_type, handler)
+        logger.debug(
+            "Registered bot update handler %s for update type %s",
+            handler_id,
+            update_type,
+        )
+
+        if self.init_complete and self._dp:
+            asyncio.ensure_future(self._restart_polling())
+
+    def unregister_bot_update_handler(self, handler_id: str):
+        """
+        Unregister a bot update handler and rebuild dispatcher
+        :param handler_id: Handler ID to remove
+        """
+        if handler_id not in self._bot_update_handlers:
+            return
+
+        del self._bot_update_handlers[handler_id]
+        logger.debug("Unregistered bot update handler %s", handler_id)
+
+        if self.init_complete and self._dp:
+            asyncio.ensure_future(self._restart_polling())
 
     def pop_web_auth_token(self, token: str) -> bool:
         """

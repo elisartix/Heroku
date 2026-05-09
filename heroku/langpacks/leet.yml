@@ -187,6 +187,11 @@ terminal:
   _cmd_doc_terminal: "<command> - Ex3cu73 b45h cmd"
   _cmd_doc_terminate: "[-f 2 f0rc3 k1ll] - U53 1n r3ply 2 s3nd SIGTERM 2 4 pr0c355"
   _cls_doc: "Run5 cmd5"
+  exec_confirm: "<b>5y573m c0mm4nd:</b> <code>{}</code>"
+  exec_running: "<b>3x3cu71ng...</b>"
+  btn_execute: "3x3cu73"
+  inline_hint: "73rm1n4l"
+  inline_hint_desc: "574r7 7yp1ng 4 c0mm4nd"
 
 heroku_web:
   privacy_leak: "⚠️ <b>7h15 cmd g1v35 4cc355 2 ur H3r0ku w3b 1n73rf4c3. 17'5 n07 r3c0mm3nd3d 2 run 17 1n publ1c gr0up ch475. C0n51d3r u51ng 17 1n <a href='tg://openmessage?user_id={}'>S4v3d m5g5</a>. 7yp3</b> <code>{}proxypass force_insecure</code> <b>2 1gn0r3 7h15 w4rn1ng</b>"
@@ -638,8 +643,18 @@ translations:
   requested_join: "💫 <b>M0dul3</b> <code>{}</code> <b>r3qu3573d 2 j01n ch4nn3l <a href='https://t.me/{}'>{}</a></b>\n\n<b>❓ R3450n:</b> <i>{}</i>"
   fw_error: "<tg-emoji emoji-id=5877458226823302157>🕒</tg-emoji> <b>C4ll</b> <code>{}</code> <b>c4u53d Fl00dW417 0f {} 0n m37h0d</b> <code>{}</code>"
   rpc_error: "<tg-emoji emoji-id=5877477244938489129>🚫</tg-emoji> <b>C4ll</b> <code>{}</code> <b>f41l3d du3 2 RPC 3rr:</b> <code>{}</code>"
-  _cmd_doc_dllangpack: "[link to a langpack | empty to remove] - Ch4ng3 H3r0ku 7r4n5l473 p4ck (3x73rn4l)"
-  _cmd_doc_setlang: "[languages in the order of priority] - Ch4ng3 d3f4ul7 l4ngu4g3"
+  _cmd_doc_dllangpack: "[l1nk 2 p4ck] - 4dd 3x73rn4l 7r4n5l4710n p4ck"
+  _cmd_doc_setlang: "[l4ngu4g3] - ch4ng3 d3f4ul7 l4ngu4g3"
+  downloaded_langs: "D0wnl04d3d"
+  btn_yes: "Y35"
+  btn_cancel: "C4nc3l"
+  btn_delete: "D3l373"
+  btn_back: "B4ck"
+  no_downloaded: "<b>L157 15 3mp7y</b>"
+  choose_downloaded: "<b>D0wnl04d3d l4ngu4g35</b>"
+  confirm_lang: "<b>1n574ll 7h15 l4ngu4g3?</b>"
+  action_cancelled: "<b>4c710n c4nc3ll3d</b>"
+  lang_deleted: "<b>L4ngu4g3 5ucc355fu11y d3l373d</b>"
   _cls_doc: "Pr0c35535 1n73rn4l 7r4n5l4710n5"
 
 eval:

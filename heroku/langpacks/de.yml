@@ -173,6 +173,11 @@ terminal:
   _cmd_doc_apt: "Kurzform für '.terminal apt'"
   _cmd_doc_terminal: "<Befehl> - Führen Sie einen Befehl im System aus"
   _cmd_doc_terminate: "[-f zum Erzwingen] - Antworten Sie auf eine Nachricht, um den Prozess zu beenden"
+  exec_confirm: "<b>Systembefehl:</b> <code>{}</code>"
+  exec_running: "<b>Führe aus...</b>"
+  btn_execute: "Ausführen"
+  inline_hint: "Terminal"
+  inline_hint_desc: "Beginnen Sie, einen Befehl einzugeben"
 
 heroku_web:
   privacy_leak: "⚠️ <b>Dieser Befehl gewährt Zugriff auf die Heroku-Weboberfläche. Die Ausführung in öffentlichen Chats stellt ein Sicherheitsrisiko dar. Es wird empfohlen, dies in den <a href='tg://openmessage?user_id={}'>Gespeicherten Nachrichten</a> auszuführen. Führe</b> <code>{}proxypass force_insecure</code> <b>aus, um diese Warnung zu deaktivieren</b>"
@@ -604,8 +609,18 @@ translations:
   requested_join: "💫 <b>Das Modul</b> <code>{}</code> <b>hat um den Beitritt zum Kanal <a href='https://t.me/{}'>{}</a> gebeten</b>\n\n<b>❓ Grund:</b> <i>{}</i>"
   fw_error: "<tg-emoji emoji-id=5877458226823302157>🕒</tg-emoji> <b>Befehl</b> <code>{}</code> <b>hat FloodWait {} im Methode</b> <code>{}</code> ausgelöst"
   rpc_error: "<tg-emoji emoji-id=5877477244938489129>🚫</tg-emoji> <b>Befehl</b> <code>{}</code> <b>ist wegen RPC-Fehler fehlgeschlagen:</b> <code>{}</code>"
-  _cmd_doc_dllangpack: "[Link zum Paket | leer, um zu löschen] - Ändere das externe Übersetzungspaket"
-  _cmd_doc_setlang: "[Sprachen] - Ändere die Standardsprache"
+  _cmd_doc_dllangpack: "[Link zum Pack] - externes Übersetzungspaket hinzufügen"
+  _cmd_doc_setlang: "[Sprache] - Standardsprache ändern"
+  downloaded_langs: "Heruntergeladen"
+  btn_yes: "Ja"
+  btn_cancel: "Abbrechen"
+  btn_delete: "Löschen"
+  btn_back: "Zurück"
+  no_downloaded: "<b>Liste ist leer</b>"
+  choose_downloaded: "<b>Heruntergeladene Sprachen</b>"
+  confirm_lang: "<b>Diese Sprache installieren?</b>"
+  action_cancelled: "<b>Aktion abgebrochen</b>"
+  lang_deleted: "<b>Sprache erfolgreich gelöscht</b>"
 
 eval:
   eval: "<tg-emoji emoji-id={}>💻</tg-emoji><b> Code:</b>\n<pre><code class=\"language-{}\">{}</code></pre>\n\n<tg-emoji emoji-id=5197688912457245639>✅</tg-emoji><b> Ergebnis:</b>\n<pre><code class=\"language-{}\">{}</code></pre>"

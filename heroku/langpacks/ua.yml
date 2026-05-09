@@ -173,6 +173,11 @@ terminal:
   _cmd_doc_apt: "Скорочення для '.terminal apt'"
   _cmd_doc_terminal: "<команда> - Запустити команду в системі"
   _cmd_doc_terminate: "[-f to force kill] - Дай відповідь на повідомлення, щоб вбити процес"
+  exec_confirm: "<b>Системна команда:</b> <code>{}</code>"
+  exec_running: "<b>Виконую...</b>"
+  btn_execute: "Виконати"
+  inline_hint: "Terminal"
+  inline_hint_desc: "Почніть вводити команду"
 
 heroku_web:
   privacy_leak: "⚠️ <b>Ця команда надає доступ до веб-інтерфейсу Heroku. Її виконання в публічних чатах є загрозою для безпеки. Переважно виконувати її в <a href='tg://openmessage?user_id={}'>Збережених повідомленнях</a>. Виконай</b> <code>{}proxypass force_insecure</code> <b>щоб вимкнути це попередження</b>"
@@ -606,8 +611,18 @@ translations:
   requested_join: "💫 <b>Модуль</b> <code>{}</code> <b>запросив приєднання до каналу <a href='https://t.me/{}'>{}</a></b>\n\n<b>❓ Причина:</b> <i>{}</i>"
   fw_error: "<tg-emoji emoji-id=5877458226823302157>🕒</tg-emoji> <b>Команда</b> <code>{}</code> <b>викликав FloodWait {} у методі</b> <code> {}</code>"
   rpc_error: "<tg-emoji emoji-id=5877477244938489129>🚫</tg-emoji> <b>Команда</b> <code>{}</code> <b>не вдалася через помилку RPC:</b> <code>{}</code>"
-  _cmd_doc_dllangpack: "[посилання на пк | без аргументів щоб видалити] - Змінити зовнішній пак"
-  _cmd_doc_setlang: "[мови] - Змінити стандартну мову"
+  _cmd_doc_dllangpack: "[посилання на пак] - додати зовнішній пак перекладу"
+  _cmd_doc_setlang: "[мова] - змінити мову за замовчуванням"
+  downloaded_langs: "Завантажені"
+  btn_yes: "Так"
+  btn_cancel: "Скасувати"
+  btn_delete: "Видалити"
+  btn_back: "Назад"
+  no_downloaded: "<b>Список порожній</b>"
+  choose_downloaded: "<b>Завантажені мови</b>"
+  confirm_lang: "<b>Встановити цю мову?</b>"
+  action_cancelled: "<b>Дію скасовано</b>"
+  lang_deleted: "<b>Мову успішно видалено</b>"
 
 eval:
   eval: "<tg-emoji emoji-id={}>💻</tg-emoji><b> Код:</b>\n<pre><code class=\"language-{}\">{}</code></pre>\n\n<tg-emoji emoji-id=5197688912457245639>✅</tg-emoji><b> Результат:</b>\n<pre><code class=\"language-{}\">{}</code></pre>"
