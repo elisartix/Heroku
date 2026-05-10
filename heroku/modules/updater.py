@@ -778,20 +778,18 @@ class UpdaterMod(loader.Module):
         )
         await self.restart_common(call)
 
-    async def ubstop_func(self):
+    async def ubstop_func(self, call: InlineCall):
         
+        await utils.answer(
+            call,
+            self.strings["ub_stop"].format(emoji=utils.get_platform_emoji()),
+        )
+
         if "LAVHOST" in os.environ:
-            await utils.answer(
-                message,
-                self.strings["ub_stop"].format(emoji=utils.get_platform_emoji()),
-            )
-            await self.client.send_message("lavhostbot", "⏹ Stop")
+            await self.client.send_message("lavhostbot", "⏹️ Stop")
         else:
-            await utils.answer(
-                message,
-                self.strings["ub_stop"].format(emoji=utils.get_platform_emoji()),
-            )
             exit()
+
 
     @loader.command()
     async def ubstop(self, message: Message):
@@ -799,8 +797,18 @@ class UpdaterMod(loader.Module):
 
         form = await self.inline.form(
             message=message,
+            text="🪐",
+            silent=True,
+        )
+
+        if not form:
+            return
+
+        await form.edit(
             text=self.strings["stop_ub_confirm"].format(
-                utils.get_platform_emoji() if self.client.heroku_me.premium is True else "Heroku"
+                utils.get_platform_emoji()
+                if self.client.heroku_me.premium
+                else "Heroku"
             ),
             reply_markup=[
                 [
