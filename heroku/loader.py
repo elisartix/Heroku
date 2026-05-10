@@ -131,9 +131,12 @@ def _calc_module_hash(source: str) -> str:
 def _make_session_allowlist():
     data: typing.FrozenSet[str] = frozenset()
     allowed_callers = frozenset({
+        f"{__package__}.main",
+        f"{__package__}.modules.loader",
         f"{__package__}.modules.heroku_plugin_security",
         __name__,
     })
+
 
     def _caller_module() -> typing.Optional[str]:
         for frame_info in inspect.stack():
