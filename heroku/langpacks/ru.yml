@@ -434,6 +434,7 @@ updater:
   update_confirm: "<tg-emoji emoji-id=5382187118216879236>❓</tg-emoji> <b>Ты уверен, что хочешь обновиться?\n\n<a href=\"https://github.com/coddrago/Heroku/commit/{}\">{}</a> ⤑ <a href=\"https://github.com/coddrago/Heroku/commit/{}\">{}</a></b>"
   no_update: "<tg-emoji emoji-id=5465496001856950230>🌟</tg-emoji> <b>У тебя последняя версия. Обновиться принудительно?</b>"
   cancel: "🚫 Отмена"
+  stop_ub_confirm: "Ваш {} был остановлен, вы уверены?"
   _cls_doc: "Обновляет юзербот"
   invalid_args: "<tg-emoji emoji-id=5210952531676504517>🚫</tg-emoji> <b>Вы должны указать количество коммитов для отката!</b>"
   rollback_too_far: "<tg-emoji emoji-id=5210952531676504517>🚫</tg-emoji> <b>Вы откатываетесь слишком далеко!</b>"

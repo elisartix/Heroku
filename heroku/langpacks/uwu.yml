@@ -458,6 +458,7 @@ updater:
   update_confirm: "<tg-emoji emoji-id=5382187118216879236>❓</tg-emoji> <b>Awe you suwe you want to update?\n\n<a href=\"https://github.com/coddrago/Heroku/commit/{}\">{}</a> ⤑ <a href=\"https://github.com/coddrago/Heroku/commit/{}\">{}</a></b>"
   no_update: "<tg-emoji emoji-id=5465496001856950230>🌟</tg-emoji> <b>You awe on da watest vewsion, puww updates anyway?</b>"
   cancel: "🚫 Cancew"
+  stop_ub_confirm: "Youw {} has been stopped, awe you suwe? :3"
   full_success: "<tg-emoji emoji-id=6028215594707324419>👍</tg-emoji> <b>Usewbot is fuwwy woaded! {}</b>\n<i>Fuww westawt took {}s</i>"
   ub_stop: "Youw {emoji} has been stopped"
   full_fail: "<tg-emoji emoji-id=5210952531676504517>❌</tg-emoji> <b>Usewbot is fuwwy woaded, but an ewwow occuwwed! {}\n<i>Fuww westawt took {}s\nFaiwed to woad {} moduwes</i>"

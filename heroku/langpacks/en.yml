@@ -489,6 +489,7 @@ updater:
   update_confirm: "<tg-emoji emoji-id=5382187118216879236>❓</tg-emoji> <b>Are you sure you want to update?\n\n<a href=\"https://github.com/coddrago/Heroku/commit/{}\">{}</a> ⤑ <a href=\"https://github.com/coddrago/Heroku/commit/{}\">{}</a></b>"
   no_update: "<tg-emoji emoji-id=5465496001856950230>🌟</tg-emoji> <b>You are on the latest version, pull updates anyway?</b>"
   cancel: "🚫 Cancel"
+  stop_ub_confirm: "Your {} has been stopped, are you sure?"
   full_success: "<tg-emoji emoji-id=6028215594707324419>👍</tg-emoji> <b>Userbot is fully loaded! {}</b>\n<i>Full restart took {}s</i>"
   ub_stop: "Your {emoji} has been stopped"
   full_fail: "<tg-emoji emoji-id=5210952531676504517>❌</tg-emoji> <b>Userbot is fully loaded, but an error occurred! {}\n<i>Full restart took {}s\nFailed to load {} modules</i>"

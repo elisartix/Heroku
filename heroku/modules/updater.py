@@ -800,7 +800,7 @@ class UpdaterMod(loader.Module):
         form = await self.inline.form(
             message=message,
             text=self.strings["stop_ub_confirm"].format(
-                utils.get_platform_emoji() if c.heroku_me.premium is True else "Heroku"
+                utils.get_platform_emoji() if self.client.heroku_me.premium is True else "Heroku"
             ),
             reply_markup=[
                 [
