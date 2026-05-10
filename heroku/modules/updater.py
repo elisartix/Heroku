@@ -778,8 +778,7 @@ class UpdaterMod(loader.Module):
         )
         await self.restart_common(call)
 
-    async def ubstop_func(self, call: InlineCall):
-        
+    async def ubstop_func(self, call: typing.Union[Message, InlineCall]):
         await utils.answer(
             call,
             self.strings["ub_stop"].format(emoji=utils.get_platform_emoji()),
@@ -790,10 +789,14 @@ class UpdaterMod(loader.Module):
         else:
             exit()
 
-
     @loader.command()
     async def ubstop(self, message: Message):
         """| stops your userbot"""
+
+        args = utils.get_args(message)
+        if "-f" in args or "--force" in args:
+            await self.ubstop_func(message)
+            return
 
         form = await self.inline.form(
             message=message,

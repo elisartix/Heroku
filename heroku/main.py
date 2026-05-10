@@ -470,6 +470,13 @@ def parse_arguments() -> dict:
         action="store_true",
         help="Disable git checks and updates",
     )
+    parser.add_argument(
+        "--wipe",
+        "-w",
+        dest="wipe",
+        action="store_true",
+        help="Remove saved sessions and config, then exit",
+    )
     arguments = parser.parse_args()
     logging.debug(arguments)
     return arguments
