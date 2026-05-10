@@ -797,7 +797,7 @@ class UpdaterMod(loader.Module):
     async def ubstop(self, message: Message):
         """| stops your userbot"""
 
-        self.inline.form(
+        form = await self.inline.form(
             message=message,
             text=self.strings["stop_ub_confirm"].format(
                 utils.get_platform_emoji() if c.heroku_me.premium is True else "Heroku"
