@@ -434,7 +434,7 @@ test:
   debugging_disabled: "<tg-emoji emoji-id=5332533929020761310>✅</tg-emoji> <b>Debug mode disabled</b>"
   send_anyway: "📤 sudo force send"
   cancel: "🚫 ^C"
-  stop_ub_confirm: "Your {} daemon has been systemctl stop'd, proceed?"
+  stop_ub_confirm: "Your {} daemon will be systemctl stop'd, proceed?"
   logs_cleared: "🗑 <b>Logs flushed</b>"
   _cmd_doc_clearlogs: "rm logs"
   _cmd_doc_debugmod: "[module] - Hot-reload debugging"
