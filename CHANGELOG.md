@@ -15,6 +15,16 @@
 - fix chat creation
 - add category in config
 - fix addacc self reply logic
+- add -w and --wipe argument for python3 -m heroku for wipe session, databases, loaded modules
+- add duplicate alias warning with target command name
+- add -f and --force argument to owneradd
+- add -n and --nonick argument to owneradd
+- add ubstop inline confirmation
+- add -f and --force argument to ubstop
+- fix restoreall response when backup contains pip-backup
+- add dependencies restore from pip-backup files
+- skip failed backup dependencies during restore
+- fix pip-backup handling inside mods.zip
 
 ## 🪐 Heroku 2.0.0
 - rework utils
