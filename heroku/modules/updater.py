@@ -778,10 +778,8 @@ class UpdaterMod(loader.Module):
         )
         await self.restart_common(call)
 
-    @loader.command()
-    async def ubstop(self, message: Message):
-        """| stops your userbot"""
-
+    async def ubstop_func(self):
+        
         if "LAVHOST" in os.environ:
             await utils.answer(
                 message,
@@ -794,3 +792,28 @@ class UpdaterMod(loader.Module):
                 self.strings["ub_stop"].format(emoji=utils.get_platform_emoji()),
             )
             exit()
+
+    @loader.command()
+    async def ubstop(self, message: Message):
+        """| stops your userbot"""
+
+        self.inline.form(
+            message=message,
+            text=self.strings["stop_ub_confirm"].format(
+                utils.get_platform_emoji() if c.heroku_me.premium is True else "Heroku"
+            ),
+            reply_markup=[
+                {
+                    "text": "✅",
+                    "callback": self.ubstop_func,
+                    "style": "primary",
+                },
+            ],
+            [
+                {
+                    "text": "❌",
+                    "action": "close",
+                    "style": "primary"
+                }
+            ]
+        )
