@@ -1088,14 +1088,16 @@ class HerokuConfigMod(loader.Module):
                         utils.escape_html(section_name)
                     )
                 ]
+                cat_text.append("<blockquote expandable>")
                 cat_text.extend(
                     [
-                        "∟ ▫️ <code>{}</code>: <b>{}</b>".format(
+                        "∟ ▫️ <code>{}</code>: {}".format(
                             utils.escape_html(p), fmt_value(p)
                         )
                         for p in section_params
                     ]
                 )
+                cat_text.append("</blockquote>")
                 sections.append("\n".join(cat_text))
                 btns.append(
                     {
