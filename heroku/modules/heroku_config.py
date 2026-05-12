@@ -951,7 +951,7 @@ class HerokuConfigMod(loader.Module):
         if category is not None:
             params = list(grouped.get(category, []))
             option_lines = [
-                "▫️ <code>{}</code>: <b>{}</b>".format(
+                "▫️ <code>{}</code>: {}".format(
                     utils.escape_html(p), fmt_value(p)
                 )
                 for p in params

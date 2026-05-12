@@ -1052,7 +1052,7 @@ class Modules:
 
                 loaded += [await self.register_module(spec, module_name, origin)]
 
-                logger.debug("Successfully loaded %s from filesystem")
+                logger.debug("Successfully loaded %s from filesystem", module_name)
             except Exception as e:
                 logger.exception("Failed to load module %s due to %s:", mod, e)
 
