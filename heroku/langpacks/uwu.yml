@@ -557,6 +557,7 @@ loader:
   finding_module_in_repos: "<tg-emoji emoji-id=5873204392429096339>🔄</tg-emoji> Wooking fow moduwes in wepositowies."
   loading_module_via_file: "<tg-emoji emoji-id=5873204392429096339>🔄</tg-emoji> Woading da moduwe."
   ml_load_module: "<tg-emoji emoji-id=5873204392429096339>🔄</tg-emoji> I'm downwoading da moduwe as a fiwe."
+  no_ml: "<tg-emoji emoji-id=5454225457916420314>😖</tg-emoji> <b>Moduwe</b> <code>{}</code> <b>cannyot be expowted as a fiwe</b>"
   not_exact: "<tg-emoji emoji-id=5355133243773435190>⚠️</tg-emoji> <i>Nyo exact match has been found, so da cwosest wesuwt is shown instead</i>"
   args: "<tg-emoji emoji-id=5210952531676504517>❌</tg-emoji> <b>You must specify awguments</b>"
   repo_config_doc: "UWW to a moduwe wepo"

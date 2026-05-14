@@ -526,6 +526,7 @@ loader:
   finding_module_in_repos: "<tg-emoji emoji-id=5873204392429096339>🔄</tg-emoji> Ищу в репо..."
   loading_module_via_file: "<tg-emoji emoji-id=5873204392429096339>🔄</tg-emoji> Гружу..."
   ml_load_module: "<tg-emoji emoji-id=5873204392429096339>🔄</tg-emoji> Качаю как файл..."
+  no_ml: "<tg-emoji emoji-id=5454225457916420314>😖</tg-emoji> <b>Модуль</b> <code>{}</code> <b>нельзя выгрузить файлом</b>"
   not_exact: "<tg-emoji emoji-id=5355133243773435190>⚠️</tg-emoji> <i>Точно такого нет, вот похожее</i>"
   args: "<tg-emoji emoji-id=5210952531676504517>❌</tg-emoji> <b>Аргументы где?</b>"
   repo_config_doc: "Ссылка на репо"

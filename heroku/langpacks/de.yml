@@ -525,6 +525,7 @@ loader:
   file: "<tg-emoji emoji-id=5256113064821926998>📁</tg-emoji> <b>Datei von</b> {class_name}\n\n<tg-emoji emoji-id=5134452506935427991>🪐</tg-emoji> <b>{prefix}lm als Antwort auf diese Nachricht zum Installieren</b>\n\n{not_exact}"
   loading_module_via_file: "<tg-emoji emoji-id=5873204392429096339>🔄</tg-emoji> Das Modul wird geladen."
   ml_load_module: "<tg-emoji emoji-id=5873204392429096339>🔄</tg-emoji> Ich lade das Modul als Datei herunter."
+  no_ml: "<tg-emoji emoji-id=5454225457916420314>😖</tg-emoji> <b>Modul</b> <code>{}</code> <b>kann nicht als Datei exportiert werden</b>"
   not_exact: "<tg-emoji emoji-id=5355133243773435190>⚠️</tg-emoji> <i>Es wurde keine genaue Übereinstimmung gefunden, daher wird stattdessen das nächstgelegene Ergebnis angezeigt</i>"
   args: "<tg-emoji emoji-id=5210952531676504517>❌</tg-emoji> <b>Sie müssen Argumente angeben</b>"
   repo_config_doc: "Link zum Modul-Download"

@@ -557,6 +557,7 @@ loader:
   finding_module_in_repos: "<tg-emoji emoji-id=5873204392429096339>🔄</tg-emoji> リポジトリ内のモジュールを探しています。"
   loading_module_via_file: "<tg-emoji emoji-id=5873204392429096339>🔄</tg-emoji> モジュールを読み込んでいます。"
   ml_load_module: "<tg-emoji emoji-id=5873204392429096339>🔄</tg-emoji> モジュールをファイルとしてダウンロードしています。"
+  no_ml: "<tg-emoji emoji-id=5454225457916420314>😖</tg-emoji> <b>モジュール</b> <code>{}</code> <b>はファイルとしてエクスポートできません</b>"
   not_exact: "<tg-emoji emoji-id=5355133243773435190>⚠️</tg-emoji> <i>完全一致が見つからなかったため、最も近い結果が表示されています</i>"
   args: "<tg-emoji emoji-id=5210952531676504517>❌</tg-emoji> <b>引数を指定する必要があります</b>"
   repo_config_doc: "モジュールリポジトリへのURL"

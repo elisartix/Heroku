@@ -1627,6 +1627,26 @@ class LoaderMod(loader.Module):
             await utils.answer(message, self.strings("404"))
             return
 
+        module_data = sys_module.__loader__.data
+        if isinstance(module_data, str):
+            module_data = module_data.encode("utf-8")
+
+        module_doc = (
+            module_data.decode("utf-8", errors="ignore")
+            if isinstance(module_data, (bytes, bytearray))
+            else str(module_data)
+        )
+
+        if any(
+            line.replace(" ", "") == "#scope:no_ml"
+            for line in module_doc.splitlines()
+        ):
+            await utils.answer(
+                message,
+                self.strings("no_ml").format(utils.escape_html(class_name)),
+            )
+            return
+
         link = module.__origin__
 
         text = (
@@ -1654,7 +1674,7 @@ class LoaderMod(loader.Module):
             )
         )
 
-        file = io.BytesIO(sys_module.__loader__.data)
+        file = io.BytesIO(module_data)
         file.name = f"{class_name}.py"
         file.seek(0)
 
