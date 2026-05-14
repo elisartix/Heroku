@@ -392,11 +392,9 @@ class InlineManager(
         exception: Exception = None
 
         async def result_getter():
-            nonlocal unit_id, q, exception
-            try:
+            nonlocal unit_id, q
+            with contextlib.suppress(Exception):
                 q = await self._client.inline_query(self.bot_username, unit_id)
-            except Exception as e:
-                exception = e
 
         async def event_poller():
             nonlocal exception
