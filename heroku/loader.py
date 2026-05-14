@@ -1439,18 +1439,12 @@ class Modules:
         )
         if is_internalized:
             instance.__force_internal__ = True
-            
+
             if module_hash:
                 try:
-                    session_allow = self._db.get(
-                        "HerokuPluginSecurity", "session_allow", []
-                    )
-                    if module_hash not in session_allow:
-                        session_allow.append(module_hash)
-                        self._db.set(
-                            "HerokuPluginSecurity", "session_allow", session_allow
-                        )
-                    set_session_access_hashes(session_allow)
+                    from .modules.heroku_plugin_security import allow_session_hash
+
+                    allow_session_hash(self._db, module_hash)
                 except Exception as e:
                     logger.debug(
                         "Failed to add module hash to session allowlist: %s", e

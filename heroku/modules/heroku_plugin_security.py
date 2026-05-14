@@ -16,6 +16,26 @@ import typing
 from .. import loader, utils
 
 
+def allow_session_hash(db, module_hash: str) -> typing.List[str]:
+    if not module_hash:
+        return []
+
+    session_allow = db.get("HerokuPluginSecurity", "session_allow", [])
+    if not isinstance(session_allow, list):
+        session_allow = (
+            list(session_allow)
+            if isinstance(session_allow, (tuple, set))
+            else []
+        )
+
+    if module_hash not in session_allow:
+        session_allow.append(module_hash)
+        db.set("HerokuPluginSecurity", "session_allow", session_allow)
+
+    loader.set_session_access_hashes(session_allow)
+    return session_allow
+
+
 @loader.tds
 class HerokuPluginSecurity(loader.Module):
     """Manage external module security overrides"""
