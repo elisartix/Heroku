@@ -15,6 +15,7 @@
 import asyncio
 import collections
 import functools
+import inspect
 import logging
 import os
 import re
@@ -58,11 +59,13 @@ class Web:
     def __init__(self, **kwargs):
         self.sign_in_clients = {}
         self._pending_client = None
+        self._pending_phone = None
         self._qr_login = None
         self._qr_task = None
         self._2fa_needed = None
         self._sessions = []
         self._ratelimit = {"__global_count__": []}
+        self._login_lock = asyncio.Lock()
         self.api_token = kwargs.pop("api_token")
         self.data_root = kwargs.pop("data_root")
         self.connection = kwargs.pop("connection")
@@ -89,6 +92,28 @@ class Web:
         await asyncio.sleep(1)
         await main.heroku.save_client_session(self._pending_client, delay_restart=False)
         restart()
+
+    async def _clear_pending_login(self):
+        if self._qr_task:
+            self._qr_task.cancel()
+            self._qr_task = None
+
+        self._qr_login = None
+        self._2fa_needed = False
+
+        client = self._pending_client
+        self._pending_client = None
+        self._pending_phone = None
+
+        if not client:
+            return
+
+        try:
+            disconnected = client.disconnect()
+            if inspect.isawaitable(disconnected):
+                await disconnected
+        except Exception:
+            logger.debug("Failed to disconnect pending login client", exc_info=True)
 
     @property
     def _platform_emoji(self) -> str:
@@ -253,22 +278,18 @@ class Web:
         if not self._check_session(request):
             return web.Response(status=401)
 
-        if self._pending_client is not None:
-            self._pending_client = None
-            self._qr_login = None
-            if self._qr_task:
-                self._qr_task.cancel()
-                self._qr_task = None
+        async with self._login_lock:
+            if self._pending_client is not None:
+                await self._clear_pending_login()
+                logger.debug("QR login cancelled, new session created")
 
-            self._2fa_needed = False
-            logger.debug("QR login cancelled, new session created")
+            client = self._get_client()
+            self._pending_client = client
+            self._pending_phone = None
 
-        client = self._get_client()
-        self._pending_client = client
-
-        await client.connect()
-        self._qr_login = await client.qr_login()
-        self._qr_task = asyncio.ensure_future(self._qr_login_poll())
+            await client.connect()
+            self._qr_login = await client.qr_login()
+            self._qr_task = asyncio.ensure_future(self._qr_login_poll())
 
         return web.Response(body=self._qr_login.url)
 
@@ -323,24 +344,37 @@ class Web:
         if self.client_data and "LAVHOST" in os.environ:
             return web.Response(status=403, body="Forbidden by host EULA")
 
-        if self._pending_client:
-            return web.Response(status=208, body="Already pending")
-
         text = await request.text()
         phone = parse_phone(text)
 
         if not phone:
             return web.Response(status=400, body="Invalid phone number")
 
-        client = self._get_client()
+        async with self._login_lock:
+            if self._pending_client:
+                if self._qr_login is not None or self._qr_task:
+                    await self._clear_pending_login()
+                    logger.debug("QR login cancelled, switching to phone login")
+                elif self._pending_phone == phone:
+                    logger.debug("Telegram code request is already pending")
+                    return web.Response(body="ok")
+                else:
+                    await self._clear_pending_login()
+                    logger.debug("Pending phone login cancelled, switching phone")
 
-        self._pending_client = client
+            client = self._get_client()
+            self._pending_client = client
+            self._pending_phone = phone
 
-        await client.connect()
-        try:
-            await client.send_code_request(phone)
-        except FloodWaitError as e:
-            return web.Response(status=429, body=self._render_fw_error(e))
+            try:
+                await client.connect()
+                await client.send_code_request(phone)
+            except FloodWaitError as e:
+                await self._clear_pending_login()
+                return web.Response(status=429, body=self._render_fw_error(e))
+            except Exception:
+                await self._clear_pending_login()
+                raise
 
         return web.Response(body="ok")
 
@@ -473,6 +507,7 @@ class Web:
         # Client is ready to pass in to dispatcher
         main.heroku.clients = list(set(main.heroku.clients + [self._pending_client]))
         self._pending_client = None
+        self._pending_phone = None
 
         self.clients_set.set()
 

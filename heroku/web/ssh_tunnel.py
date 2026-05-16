@@ -2,6 +2,7 @@ import typing
 import logging
 import asyncio
 import re
+import shlex
 
 logger = logging.getLogger(__name__)
 
@@ -12,15 +13,22 @@ class SSHTunnel:
         port: int,
         change_url_callback: typing.Callable[[str], None] = None,
     ):
-        # TODO: select ssh servers?
         self.ssh_commands = [
             (
-                f"ssh -o StrictHostKeyChecking=no -R 80:127.0.0.1:{port} serveo.net -T -n",
-                r"https:\/\/(\S*serveousercontent\.com\S*)",
+                "Pinggy",
+                (
+                    "ssh -T -n -p 443 -o StrictHostKeyChecking=no "
+                    f"-R 0:127.0.0.1:{port} a.pinggy.io"
+                ),
+                r"https://\S*pinggy\.link\S*",
             ),
             (
-                f"ssh -o StrictHostKeyChecking=no -R 80:127.0.0.1:{port} nokey@localhost.run",
-                r"https:\/\/(\S*lhr\.life\S*)",
+                "localhost.run",
+                (
+                    "ssh -T -n -o StrictHostKeyChecking=no "
+                    f"-R 80:127.0.0.1:{port} nokey@localhost.run"
+                ),
+                r"https://\S*(?:localhost\.run|lhr\.life)\S*",
             ),
         ]
         self._change_url_callback = change_url_callback
@@ -69,14 +77,14 @@ class SSHTunnel:
             return
         try:
             while self.current_command_index < len(self.ssh_commands):
-                ssh_command, regex_pattern = self.ssh_commands[
+                tunnel_name, ssh_command, regex_pattern = self.ssh_commands[
                     self.current_command_index
                 ]
                 logger.debug(
-                    f"Attempting SSH command: {ssh_command} with pattern: {regex_pattern}"
+                    f"Attempting {tunnel_name} SSH command: {ssh_command} with pattern: {regex_pattern}"
                 )
                 try:
-                    command_list = ssh_command.split()
+                    command_list = shlex.split(ssh_command)
                     self.process = await asyncio.create_subprocess_exec(
                         *command_list,
                         stdout=asyncio.subprocess.PIPE,
@@ -87,6 +95,11 @@ class SSHTunnel:
                     asyncio.create_task(
                         self._read_stream_and_process(
                             self.process.stdout, regex_pattern
+                        )
+                    )
+                    asyncio.create_task(
+                        self._read_stream_and_process(
+                            self.process.stderr, regex_pattern
                         )
                     )
 

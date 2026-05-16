@@ -291,6 +291,7 @@ var _api_id = "",
     _phone = "",
     _2fa_pass = "",
     _tg_pass = "",
+    _requesting_tg_code = !1,
     _current_block = skip_creds ? "qr_login" : "api_id";
 
 function is_phone() {
@@ -336,7 +337,10 @@ function process_next() {
     if ("phone" == b) {
         let b = document.querySelector("#phone").value;
         if (!isValidPhone(b)) return void error_state();
+        if (_requesting_tg_code) return void 0;
         (_phone = b),
+            (_requesting_tg_code = !0),
+            (cnt_btn.disabled = !0),
             fetch("/send_tg_code", {
                 method: "POST",
                 body: _phone,
@@ -384,6 +388,9 @@ function process_next() {
                 })
                 .catch((b) => {
                     error_state(), error_message("Code send failed: " + b.toString());
+                })
+                .finally(() => {
+                    (_requesting_tg_code = !1), (cnt_btn.disabled = !1);
                 });
     }
     if ("2fa" == b) {
