@@ -68,19 +68,17 @@ class UpdaterMod(loader.Module):
         )
 
     async def _set_autoupdate_state(self, call: BotInlineCall, state: bool):
-        self.set("autoupdate", True)
-        if not state:
-            self.config["autoupdate"] = False
-            await self.inline.bot(
-                call.answer(
-                    self.strings("autoupdate_off").format(prefix=self.get_prefix())
-                )
-            )
-            return
+        self.set("autoupdate_answered", True)
+        self.config["autoupdate"] = state
 
-        self.config["autoupdate"] = True
+        text = (
+            self.strings("autoupdate_on")
+            if state
+            else self.strings("autoupdate_off").format(prefix=self.get_prefix())
+        )
 
-        await self.inline.bot(call.answer(self.strings("autoupdate_on")))
+        await self.inline.bot(call.answer(text, show_alert=True))
+        await call.delete()
 
     def get_changelog(self) -> str:
         if NO_GIT:
@@ -525,6 +523,9 @@ class UpdaterMod(loader.Module):
         except Exception as e:
             raise loader.LoadError("Can't load due to repo init error") from e
 
+        if not self.get("autoupdate_answered"):
+            self.set("autoupdate_answered", self.get("autoupdate", False))
+
         self._markup = lambda: self.inline.generate_markup(
             [
                 {
@@ -556,7 +557,7 @@ class UpdaterMod(loader.Module):
 
             self.set("do_not_create", True)
 
-        if not self.config["autoupdate"] and not self.get("autoupdate", False):
+        if not self.config["autoupdate"] and not self.get("autoupdate_answered", False):
             await self.inline.bot.send_photo(
                 self.tg_id,
                 photo="https://raw.githubusercontent.com/coddrago/assets/refs/heads/main/heroku/unit_alpha.png",
@@ -821,12 +822,6 @@ class UpdaterMod(loader.Module):
                         "style": "primary",
                     },
                 ],
-                [
-                   {
-                        "text": "❌",
-                        "action": "close",
-                        "style": "primary"
-                    }
-                ]
-            ]
+                [{"text": "❌", "action": "close", "style": "primary"}],
+            ],
         )
