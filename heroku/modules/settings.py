@@ -342,7 +342,13 @@ class CoreMod(loader.Module):
             await utils.answer(message, self.strings("delalias_args"))
             return
 
-        alias = args[0]
+        if args[0] in {"-c", "--clear"}:
+            self.allmodules.aliases.clear()
+            self.set("aliases", {})
+            await utils.answer(message, self.strings("aliases_cleared"))
+            return
+
+        alias = args[0].lower().strip()
 
         if not self.allmodules.remove_alias(alias):
             await utils.answer(
@@ -352,7 +358,7 @@ class CoreMod(loader.Module):
             return
 
         current = self.get("aliases", {})
-        del current[alias]
+        current.pop(alias, None)
         self.set("aliases", current)
         await utils.answer(
             message,
