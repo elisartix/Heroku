@@ -65,6 +65,25 @@ class Web(root.Web):
         self.app = web.Application()
         self.proxypasser = None
 
+        # Attributes main.py expects from root.Web
+        self.api_token = kwargs.pop("api_token")
+        self.data_root = kwargs.pop("data_root")
+        self.connection = kwargs.pop("connection")
+        self.proxy = kwargs.pop("proxy")
+        self.sign_in_clients = {}
+        self._pending_client = None
+        self._qr_login = None
+        self._qr_task = None
+        self._2fa_needed = None
+        self._sessions = []
+        self._ratelimit = {}
+        self.api_set = asyncio.Event()
+        self.clients_set = asyncio.Event()
+
+        # If API token already configured, don't block wait_for_api_token_setup
+        if self.api_token is not None:
+            self.api_set.set()
+
         # Dashboard auth state
         self._dash_sessions: dict[str, float] = {}
         self._dash_csrf_tokens: dict[str, float] = {}
@@ -79,13 +98,11 @@ class Web(root.Web):
         )
         self.app["static_root_url"] = "/static"
 
-        super().__init__(**kwargs)
+        # Only dashboard routes — old setup routes removed
         self.app.router.add_get("/favicon.ico", self.favicon)
         self.app.router.add_static("/static/", _STATIC_DIR)
-
-        # Dashboard routes
+        self.app.router.add_get("/", self._dash_root)
         self.app.router.add_get("/dashboard", self._dash_page)
-        self.app.router.add_get("/login", self._dash_login_page)
         self.app.router.add_post("/api/login", self._api_login)
         self.app.router.add_post("/api/auth_key", self._api_auth_key)
         self.app.router.add_get("/api/auth_key_login/{token}", self._api_auth_key_login)
@@ -174,6 +191,7 @@ class Web(root.Web):
         db: Database,
     ):
         self.client_data[client.tg_id] = (loader, client, db)
+        self.clients_set.set()
 
     @staticmethod
     async def favicon(_):
@@ -232,17 +250,18 @@ class Web(root.Web):
 
     # ── Dashboard pages ────────────────────────────────────────
 
-    async def _dash_page(self, request: web.Request):
-        if not self._is_dash_authenticated(request):
-            raise web.HTTPFound("/login")
-        with open(os.path.join(_STATIC_DIR, "dashboard.html"), "r", encoding="utf-8") as f:
-            html = f.read()
-        return web.Response(text=html, content_type="text/html")
-
-    async def _dash_login_page(self, request: web.Request):
+    async def _dash_root(self, request: web.Request):
+        """Root / serves login page, or redirects to dashboard if already auth'd"""
         if self._is_dash_authenticated(request):
             raise web.HTTPFound("/dashboard")
         with open(os.path.join(_STATIC_DIR, "login.html"), "r", encoding="utf-8") as f:
+            html = f.read()
+        return web.Response(text=html, content_type="text/html")
+
+    async def _dash_page(self, request: web.Request):
+        if not self._is_dash_authenticated(request):
+            raise web.HTTPFound("/")
+        with open(os.path.join(_STATIC_DIR, "dashboard.html"), "r", encoding="utf-8") as f:
             html = f.read()
         return web.Response(text=html, content_type="text/html")
 

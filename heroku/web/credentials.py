@@ -62,6 +62,8 @@ class WebCredentials:
         logger.debug("Web credentials saved to %s", self.path)
 
     def log_credentials(self, port: int = 8080):
+        dash_url = f"http://localhost:{port}/dashboard"
+        login_url = f"http://localhost:{port}/"
         cred_box = (
             "\n"
             "╔══════════════════════════════════════════════════╗\n"
@@ -71,10 +73,10 @@ class WebCredentials:
             f"║  Password:  {self.password:<37}║\n"
             f"║  Auth Key:  {self.auth_key[:36]:<36}║\n"
             "╠══════════════════════════════════════════════════╣\n"
-            f"║  Dashboard: http://localhost:{port}/dashboard{' '*(25-len(str(port)))}║\n"
-            "║  Login:     http://localhost:{port}/login{' '*(26-len(str(port)))}║\n"
+            f"║  Dashboard: {dash_url:<46}║\n"
+            f"║  Login:     {login_url:<46}║\n"
             "║  Use .auth <key> in Telegram as alternative      ║\n"
             "╚══════════════════════════════════════════════════╝"
-        ).replace("{port}", str(port))
+        )
         print(cred_box)
         logger.info("Web dashboard credentials generated. Username: %s", self.username)
