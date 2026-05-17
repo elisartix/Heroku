@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heroku - Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #09090b;
+            --bg-card: #141419;
+            --bg-input: #0f0f13;
+            --border: #1f1f2e;
+            --border-hover: #2d2d42;
+            --text-primary: #f0f0f5;
+            --text-secondary: #9494a8;
+            --text-muted: #5a5a72;
+            --accent-blue: #6d8efd;
+            --accent-purple: #a370f7;
+            --accent-red: #ef4444;
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .login-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            animation: containerIn 0.5s var(--ease);
+        }
+
+        @keyframes containerIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 22px;
+            margin: 0 auto 14px;
+        }
+
+        .logo h1 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+        }
+
+        .logo p {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab:hover { color: var(--text-secondary); }
+
+        .tab.active {
+            color: var(--accent-blue);
+            border-bottom-color: var(--accent-blue);
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11.5px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 13.5px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(109, 142, 253, 0.08);
+        }
+
+        .form-group input::placeholder { color: var(--text-muted); }
+
+        .btn {
+            width: 100%;
+            padding: 11px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+            margin-top: 6px;
+            font-family: inherit;
+        }
+
+        .btn:hover { opacity: 0.9; }
+        .btn:active { transform: scale(0.98); }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .error {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+            padding: 9px 12px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            margin-bottom: 14px;
+            display: none;
+            animation: shakeIn 0.3s ease;
+        }
+
+        @keyframes shakeIn {
+            0% { transform: translateX(-4px); opacity: 0; }
+            40% { transform: translateX(3px); }
+            70% { transform: translateX(-1px); }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+
+        .form-section { display: none; }
+        .form-section.active { display: block; }
+
+        .hint {
+            text-align: center;
+            margin-top: 18px;
+            font-size: 11.5px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <div class="logo-icon">H</div>
+            <h1>Heroku</h1>
+            <p>Web Dashboard</p>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="credentials">Login / Password</div>
+            <div class="tab" data-tab="authkey">Auth Key</div>
+        </div>
+
+        <div id="error" class="error"></div>
+
+        <div class="form-section active" id="section-credentials">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="username" autocomplete="username" autofocus>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" autocomplete="current-password">
+            </div>
+            <button class="btn" id="btn-login">Sign In</button>
+        </div>
+
+        <div class="form-section" id="section-authkey">
+            <div class="form-group">
+                <label>Auth Key</label>
+                <input type="password" id="authkey" placeholder="Paste key from .auth command">
+            </div>
+            <button class="btn" id="btn-authkey">Authenticate</button>
+        </div>
+
+        <div class="hint">Credentials are shown in the bot logs on startup.<br>Use <code>.auth</code> in Telegram as an alternative.</div>
+    </div>
+
+    <script>
+        const tabs = document.querySelectorAll('.tab');
+        const sections = document.querySelectorAll('.form-section');
+        const errorEl = document.getElementById('error');
+        let csrfToken = '';
+
+        async function fetchCsrf() {
+            try {
+                const r = await fetch('/api/csrf');
+                const d = await r.json();
+                csrfToken = d.csrf_token;
+            } catch(e) {}
+        }
+        fetchCsrf();
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                sections.forEach(s => s.classList.remove('active'));
+                document.getElementById('section-' + tab.dataset.tab).classList.add('active');
+                errorEl.style.display = 'none';
+                fetchCsrf();
+            });
+        });
+
+        function showError(msg) {
+            errorEl.textContent = msg;
+            errorEl.style.display = 'block';
+        }
+
+        document.getElementById('btn-login').addEventListener('click', async () => {
+            const btn = document.getElementById('btn-login');
+            btn.disabled = true;
+            errorEl.style.display = 'none';
+
+            try {
+                const r = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        username: document.getElementById('username').value,
+                        password: document.getElementById('password').value,
+                        csrf_token: csrfToken,
+                    }),
+                });
+                if (r.ok) {
+                    window.location.href = '/dashboard';
+                } else {
+                    const d = await r.json();
+                    showError(d.error || 'Login failed');
+                    await fetchCsrf();
+                }
+            } catch(e) {
+                showError('Connection error');
+            }
+            btn.disabled = false;
+        });
+
+        document.getElementById('btn-authkey').addEventListener('click', async () => {
+            const btn = document.getElementById('btn-authkey');
+            btn.disabled = true;
+            errorEl.style.display = 'none';
+
+            try {
+                const r = await fetch('/api/auth_key', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        auth_key: document.getElementById('authkey').value,
+                    }),
+                });
+                if (r.ok) {
+                    window.location.href = '/dashboard';
+                } else {
+                    const d = await r.json();
+                    showError(d.error || 'Auth failed');
+                }
+            } catch(e) {
+                showError('Connection error');
+            }
+            btn.disabled = false;
+        });
+
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const active = document.querySelector('.form-section.active');
+                    active.querySelector('.btn').click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
