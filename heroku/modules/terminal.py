@@ -411,10 +411,25 @@ class TerminalMod(loader.Module):
         r"wipe\s+",
     ]
 
+    @staticmethod
+    def _normalize_cmd(cmd: str) -> str:
+        """Normalize command to defeat trivial bypass attempts."""
+        normalized = cmd.replace("\\\n", " ").replace("\n", ";")
+        normalized = re.sub(r"\\x([0-9a-fA-F]{2})", lambda m: chr(int(m.group(1), 16)), normalized)
+        normalized = re.sub(r"\\([0-7]{3})", lambda m: chr(int(m.group(1), 8)), normalized)
+        normalized = re.sub(r"\$\([^)]*\)", " ", normalized)
+        normalized = re.sub(r"`[^`]*`", " ", normalized)
+        normalized = re.sub(r"['\"]", "", normalized)
+        normalized = re.sub(r"\s+", " ", normalized)
+        return normalized
+
     def _is_dangerous(self, cmd: str) -> bool:
         """Return True if the command matches any banned pattern."""
+        normalized = self._normalize_cmd(cmd)
         for pattern in self.DANGEROUS_COMMANDS:
             if re.search(pattern, cmd, re.IGNORECASE):
+                return True
+            if re.search(pattern, normalized, re.IGNORECASE):
                 return True
         return False
 

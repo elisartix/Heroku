@@ -424,6 +424,20 @@ def parse_arguments() -> dict:
         help="Disable git checks and updates",
     )
     parser.add_argument(
+        "--port",
+        dest="port",
+        action="store",
+        type=int,
+        default=8080,
+        help="Web dashboard port",
+    )
+    parser.add_argument(
+        "--no-web",
+        dest="no_web",
+        action="store_true",
+        help="Disable web dashboard",
+    )
+    parser.add_argument(
         "--wipe",
         "-w",
         dest="wipe",
@@ -1061,8 +1075,36 @@ class Heroku:
 
         if first:
             await self._badge(client)
+            await self._start_web_dashboard(client, modules, db)
 
         await client.run_until_disconnected()
+
+    async def _start_web_dashboard(
+        self,
+        client: CustomTelegramClient,
+        modules: loader.Modules,
+        db: database.Database,
+    ):
+        """Start web dashboard if not already running"""
+        if getattr(self.arguments, "no_web", False):
+            return
+
+        try:
+            from .web.core import WebDashboard
+
+            if not hasattr(self, "_web_dashboard"):
+                self._web_dashboard = WebDashboard(
+                    data_root=BASE_DIR,
+                    port=getattr(self.arguments, "port", 8080),
+                )
+                await self._web_dashboard.start()
+
+            self._web_dashboard.add_client(
+                client.tg_id, modules, client, db
+            )
+            client._heroku_web = self._web_dashboard
+        except Exception:
+            logging.exception("Failed to start web dashboard")
 
     async def _main(self):
         """Main entrypoint"""
@@ -1114,6 +1156,12 @@ class Heroku:
         )
 
     async def _shutdown_handler(self):
+        if hasattr(self, "_web_dashboard"):
+            try:
+                await self._web_dashboard.stop()
+            except Exception:
+                pass
+
         for client in self.clients:
             inline = getattr(client.loader, "inline", None)
             if inline:

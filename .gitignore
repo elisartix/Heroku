@@ -174,3 +174,4 @@ Pipfile.lock
 
 heroku.log.*
 unknown_errors.txt
+web_credentials.json

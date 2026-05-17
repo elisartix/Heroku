@@ -37,13 +37,23 @@ class Evaluator(loader.Module):
 
     strings = {"name": "Evaluator"}
 
+    _PROTECTED_KEYS = {
+        ("heroku.security", "owner"),
+        ("heroku.security", "masks"),
+        ("heroku.security", "bounding_mask"),
+        ("HerokuPluginSecurity", "session_allow"),
+        ("HerokuPluginSecurity", "internalized"),
+        ("heroku.inline", "bot_token"),
+    }
+
     class _SecureDB:
         """
         Proxy class to protect sensitive DB fields from eval
         """
 
-        def __init__(self, original_db):
+        def __init__(self, original_db, protected_keys):
             self._db = original_db
+            self._protected_keys = protected_keys
 
         def __getattr__(self, name):
             return getattr(self._db, name)
@@ -52,9 +62,9 @@ class Evaluator(loader.Module):
             return self._db[item]
 
         def set(self, *args, **kwargs):
-            if len(args) >= 2 and args[0] == "heroku.security" and args[1] == "owner":
+            if len(args) >= 2 and (args[0], args[1]) in self._protected_keys:
                 raise ValueError(
-                    "⚠️ Security Protection: You cannot change the bot owner via evaluator."
+                    f"⚠️ Security Protection: Writing to {args[0]}/{args[1]} is blocked in evaluator."
                 )
 
             return self._db.set(*args, **kwargs)
@@ -74,7 +84,7 @@ class Evaluator(loader.Module):
         args = args.replace("\xa0", "\x20")
 
         real_db = self.db
-        self.db = self._SecureDB(real_db)
+        self.db = self._SecureDB(real_db, self._PROTECTED_KEYS)
 
         output_print = StringIO()
 
